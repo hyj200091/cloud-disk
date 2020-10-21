@@ -33,18 +33,53 @@
 				 />
 			</view>
 		</view>
-		<!-- <view class="bg-info" style="height: 1000px">123</view> -->
+		<block v-for="(item,index) in list" :key="index">
+	    <f-list :item="item" :index="index"></f-list>
+		 </block>
 	</view>
 </template>
 
 <script>
 import navBar from '@/components/common/nav-bar.vue'
+import fList  from '@/components/common/f-list.vue'
 	export default {
 		components:{
-			navBar
+			navBar,fList
 		},
 		data() {
 			return {
+				list: [
+				        {
+				          type: 'dir',
+				          name: '我的笔记',
+				          create_time: '2020-10-21 08:00',
+				          checked: false
+				        },
+				        {
+				          type: 'image',
+				          name: '风景.jpg',
+				          create_time: '2020-10-21 08:00',
+				          checked: false
+				        },
+				        {
+				          type: 'video',
+				          name: 'uniapp实战教程.mp4',
+				          create_time: '2020-10-21 08:00',
+				          checked: false
+				        },
+				        {
+				          type: 'text',
+				          name: '记事本.txt',
+				          create_time: '2020-10-21 08:00',
+				          checked: false
+				        },
+				        {
+				          type: 'none',
+				          name: '压缩包.rar',
+				          create_time: '2020-10-21 08:00',
+				          checked: false
+				        }
+				      ]
 			}
 		},
 		onLoad() {
