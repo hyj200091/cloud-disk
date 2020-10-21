@@ -83,7 +83,13 @@ import fList  from '@/components/common/f-list.vue'
 			}
 		},
 		onLoad() {
-
+			uni.request({
+				url: 'http://localhost:7001/list',
+				method: 'GET',
+				success: res => {
+					console.log(res.data);
+				}
+			})
 		},
 		methods: {
 
