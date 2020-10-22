@@ -7,6 +7,7 @@
 			<template slot="right">
 				<view style="width: 60rpx; height: 60rpx;"
 				class="flex align-center justify-center bg-light rounded-circle mr-3"
+				@tap="openAddDialog"
 				>
 					<text class="iconfont icon-zengjia"></text>
 				</view>
@@ -74,6 +75,28 @@
 			 placeholder="重命名"
 			  />
 		 </f-dialog>
+		 
+		<!-- 添加操作条，应当能理解这里ref的作用了，type表示弹出层的位置类型，具体取值都在popup子组件中 -->
+		<uni-popup ref="add" type="bottom"> 
+			<view class="bg-white flex" style="height: 200rpx;">
+				<!-- 遍历addList数组，纵向flex，为每个操作分配等高的空间，每个操作有图标和名称组成 -->
+				<view
+				class="flex-1 flex align-center justify-center flex-column"
+				hover-class="bg-light"
+				v-for="(item,index) in addList"
+				:key="index"
+				>
+					<!-- 每个操作的图标，可以传入图标的名称和颜色 很灵活 -->
+					<text
+					style="height: 110rpx; width: 110rpx;"
+					class="rounded-circle bg-light iconfont flex align-center justify-center"
+					:class="item.icon + ' ' + item.color"
+					></text>
+					<!-- 每个操作的名称 -->
+					<text class="font text-muted">{{item.name}}</text>
+				</view>
+			</view>
+		</uni-popup>
 	</view>
 </template>
 
@@ -81,9 +104,10 @@
 import navBar from '@/components/common/nav-bar.vue'
 import fList  from '@/components/common/f-list.vue'
 import fDialog from '@/components/common/f-dialog.vue'
+import uniPopup from '@/components/uni-ui/uni-popup/uni-popup.vue'
 	export default {
 		components:{
-			navBar,fList,fDialog
+			navBar,fList,fDialog,uniPopup
 		},
 		data() {
 			return {
@@ -118,8 +142,24 @@ import fDialog from '@/components/common/f-dialog.vue'
 				          name: '压缩包.rar',
 				          create_time: '2020-10-21 08:00',
 				          checked: false
-				        }
-				      ]
+				        }],
+						addList:[{
+						          icon:"icon-file-b-6",
+						          color:"text-success",
+						          name:"上传图片"
+						        },{
+						          icon:"icon-file-b-9",
+						          color:"text-primary",
+						          name:"上传视频"
+						        },{
+						          icon:"icon-file-b-8",
+						          color:"text-muted",
+						          name:"上传文件"
+						        },{
+						          icon:"icon-file-b-2",
+						          color:"text-warning",
+						          name:"新建文件夹",
+						        }]
 			}
 		},
 		onLoad() {
@@ -132,6 +172,10 @@ import fDialog from '@/components/common/f-dialog.vue'
 			// })
 		},
 		methods: {
+			// 打开添加的操作条
+			openAddDialog(){
+			    this.$refs.add.open();	
+			},
 			select(e){
 				// console.log(e);
 				// 接收到子组件传递过来的索引中的选中状态，将对应的list中的数据更新
@@ -175,7 +219,7 @@ import fDialog from '@/components/common/f-dialog.vue'
 				default:
 				    break;
 				}
-			}
+			},
 		},
 		computed:{
 			
