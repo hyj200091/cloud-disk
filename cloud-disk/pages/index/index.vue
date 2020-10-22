@@ -22,7 +22,7 @@
 				<view 
 				class="flex align-center justify-center text-light-muted"
 				style="height: 70rpx;width: 70rpx;position: absolute;top: 0;left: 0;">
-					<text class="iconfont icon-sousuo"></text>
+					<text class="iconfont icon-search"></text>
 				</view>
 				
 				<input

@@ -15,23 +15,23 @@
 <script>
 const icons = {
 	  dir: {
-	    icon: 'icon-file-b-2',
+	    icon: 'icon-dir',
 	    color: 'text-warning'
 	  },
 	  image: {
-	    icon: 'icon-file-b-6',
+	    icon: 'icon-image',
 	    color: 'text-success'
 	  },
 	  video: {
-	    icon: 'icon-file-b-9',
+	    icon: 'icon-video',
 	    color: 'text-primary'
 	  },
 	  text: {
-	    icon: 'icon-file-s-7',
+	    icon: 'icon-text',
 	    color: 'text-info'
 	  },
 	  none: {
-	    icon: 'icon-file-b-8',
+	    icon: 'icon-zipped',
 	    color: 'text-muted'
 	  },
 };
@@ -45,6 +45,8 @@ export default{
 			let item = icons[this.item.type]
 			return `${item.icon} ${item.color}`;
 		}
+	},
+	methods:{
 	}
 };
 </script>
