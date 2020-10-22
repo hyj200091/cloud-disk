@@ -1,8 +1,8 @@
 <template>
 	<view>
 		<!-- 自定义导航栏 -->
-		<nav-bar>
-				<template v-if="checkCount === 0">
+	<nav-bar>
+		<template v-if="checkCount === 0">
 			<text slot="left" class="font-md ml-3">首页</text>
 			<template slot="right">
 				<view style="width: 60rpx; height: 60rpx;"
@@ -41,12 +41,10 @@
 				 />
 			</view>
 		</view>
-		<block v-for="(item,index) in list" :key="index">
-	    <f-list :item="item" :index="index" @select="select"></f-list>
-		 </block>
+	    <f-list v-for="(item,index) in list" :key="index" :item="item" :index="index" @select="select"></f-list>
 		 <!-- 底部操作条 -->
 		 <!-- 选中的个数大于0才会出现这个操作条 -->
-		 <view v-if="checkCount > 0">
+<view v-if="checkCount > 0">
 		 <!-- 这里要留一定的高度，因为底部导航操作条需要被固定在底部，并空出底部tabbar高度的地方 -->
 		 <view style="height: 115rpx;"></view>
 		 <!-- 操作条的样式 高度 颜色 固定在底部，垂直方向拉升的效果 -->
@@ -57,20 +55,25 @@
 			 v-for="(item,index) in actions"
 			 :key="index"
 			 hover-class="bg-hover-primary"
+			 @click="handleBottomEvent(item)"
 			 >
 			 <text class="iconfont" :class="item.icon">{{item.name}}</text>
 			 </view>
 		 </view>
 		 </view>
+		 
+		 <!-- 是否删除 -->
+		 <f-dialog ref="dialog">是否删除选中的文件</f-dialog>
 	</view>
 </template>
 
 <script>
 import navBar from '@/components/common/nav-bar.vue'
 import fList  from '@/components/common/f-list.vue'
+import fDialog from '@/components/common/f-dialog.vue'
 	export default {
 		components:{
-			navBar,fList
+			navBar,fList,fDialog
 		},
 		data() {
 			return {
@@ -110,17 +113,17 @@ import fList  from '@/components/common/f-list.vue'
 			}
 		},
 		onLoad() {
-			uni.request({
-				url: 'http://localhost:7001/list',
-				method: 'GET',
-				success: res => {
-					console.log(res.data);
-				}
-			})
+			// uni.request({
+			// 	url: 'http://localhost:7001/list',
+			// 	method: 'GET',
+			// 	success: res => {
+			// 		console.log(res.data);
+			// 	}
+			// })
 		},
 		methods: {
 			select(e){
-				console.log(e);
+				// console.log(e);
 				// 接收到子组件传递过来的索引中的选中状态，将对应的list中的数据更新
 				this.list[e.index].checked = e.value;
 			},
@@ -129,9 +132,28 @@ import fList  from '@/components/common/f-list.vue'
 				this.list.forEach(item=> {
 					item.checked = checked;
 				})
-			}
+			},
+			// 处理底部操作条事件，这里仅对 删除 做了处理
+			handleBottomEvent(item) { 
+				console.log(item);
+				switch (item.name) {
+					case '删除':
+					this.$refs.dialog.open(close => {
+						close();
+						// 在这儿可以写点删除需要做的回调事件，这里先在控制台模拟事件需要把checklist移除掉
+						console.log('删除文件');
+					    console.log(this.checkList);
+					});
+					break;
+				default:
+				    break;
+				}
+			},
+		},
+		onShow(){
 		},
 		computed:{
+			
 			//选中列表
 			checkList(){
 			return	this.list.filter(item => item.checked);
@@ -174,7 +196,7 @@ import fList  from '@/components/common/f-list.vue'
 </script>
 
 <style>
-	.content {
+/* 	.content {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -198,5 +220,5 @@ import fList  from '@/components/common/f-list.vue'
 	.title {
 		font-size: 36rpx;
 		color: #8f8f94;
-	}
+	} */
 </style>
