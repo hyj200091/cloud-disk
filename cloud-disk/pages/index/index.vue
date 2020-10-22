@@ -76,6 +76,17 @@
 			  />
 		 </f-dialog>
 		 
+		 <!-- 新建文件夹,使用自定义弹出层，使用input作为插槽,绑定data中的newdirname变量 -->
+		 <f-dialog ref="newdir">
+			 <input
+			 type="text"
+			 v-model="newdirname"
+			 class="flex-1 bg-light rounded px-2"
+			 style="height: 95rpx;"
+			 placeholder="新建文件夹名称"
+			  />
+		 </f-dialog>
+		 
 		<!-- 添加操作条，应当能理解这里ref的作用了，type表示弹出层的位置类型，具体取值都在popup子组件中 -->
 		<uni-popup ref="add" type="bottom"> 
 			<view class="bg-white flex" style="height: 200rpx;">
@@ -85,6 +96,7 @@
 				hover-class="bg-light"
 				v-for="(item,index) in addList"
 				:key="index"
+				@tap="handleAddEvent(item)"
 				>
 					<!-- 每个操作的图标，可以传入图标的名称和颜色 很灵活 -->
 					<text
@@ -112,6 +124,7 @@ import uniPopup from '@/components/uni-ui/uni-popup/uni-popup.vue'
 		data() {
 			return {
 				renameValue: '',
+				newdirname: '',
 				list: [
 				        {
 				          type: 'dir',
@@ -220,6 +233,36 @@ import uniPopup from '@/components/uni-ui/uni-popup/uni-popup.vue'
 				    break;
 				}
 			},
+			// 处理添加操作条的各种事件
+			handleAddEvent(item) {
+				this.$refs.add.close();
+				switch (item.name) {
+					case '新建文件夹':
+					this.$refs.newdir.open(close => {
+						if(this.newdirname == '') {
+							return uni.showToast({
+								title: '文件夹名称不能为空',
+								icon: 'none'
+							});
+						}
+						// 模拟请求服务器，这里先增加到list数组中
+						this.list.push({
+							type: 'dir',
+							name: this.newdirname,
+							create_time: '2020-10-22 17:00',
+							checked: false
+						});
+						uni.showToast({
+							title: '新建文件夹成功',
+							icon: 'none'
+						});
+						close();
+					});
+					break;
+				default:
+				   break;
+				}
+			}
 		},
 		computed:{
 			
