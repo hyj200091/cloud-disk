@@ -2,6 +2,7 @@
 	<view>
 		<!-- 自定义导航栏 -->
 		<nav-bar>
+				<template v-if="checkCount === 0">
 			<text slot="left" class="font-md ml-3">首页</text>
 			<template slot="right">
 				<view style="width: 60rpx; height: 60rpx;"
@@ -14,6 +15,13 @@
 				 >
 				<text class="iconfont icon-gengduo"></text>
 				</view>
+			</template>
+		</template>
+			
+			<template v-else>
+				<view slot="left" class="font-md ml-3 text-primary">取消</view>
+				<text class="font-md font-weight-bold">已选中{{checkCount}}</text>
+				<view slot="right" class="font-md mr-3 text-primary">全选</view>
 			</template>
 		</nav-bar>
 		<!-- 搜索框 -->
@@ -34,7 +42,7 @@
 			</view>
 		</view>
 		<block v-for="(item,index) in list" :key="index">
-	    <f-list :item="item" :index="index"></f-list>
+	    <f-list :item="item" :index="index" @select="select"></f-list>
 		 </block>
 	</view>
 </template>
@@ -92,7 +100,21 @@ import fList  from '@/components/common/f-list.vue'
 			})
 		},
 		methods: {
-
+			select(e){
+				// console.log(e);
+				// 接收到子组件传递过来的索引中的选中状态，将对应的list中的数据更新
+				this.list[e.index].checked = e.value
+			}
+		},
+		computed:{
+			//选中列表
+			checkList(){
+			return	this.list.filter(item => item.checked);
+			},
+			// 选中的数量
+			checkCount() {
+				return this.checkList.length;
+			}
 		}
 	}
 </script>
