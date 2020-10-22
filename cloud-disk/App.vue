@@ -14,7 +14,6 @@
 
 <style>
 	/*引入自定义的iconfont样式*/
-	@import url("/common/iconfont.css");
 	@import url("/common/icon.css");
 	/*引入官方样式库*/
 	@import url("/common/uni.css");

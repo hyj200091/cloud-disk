@@ -19,9 +19,9 @@
 		</template>
 			
 			<template v-else>
-				<view slot="left" class="font-md ml-3 text-primary">取消</view>
+				<view slot="left" class="font-md ml-3 text-primary" @click="handleCheck(false)">取消</view>
 				<text class="font-md font-weight-bold">已选中{{checkCount}}</text>
-				<view slot="right" class="font-md mr-3 text-primary">全选</view>
+				<view slot="right" class="font-md mr-3 text-primary" @click="handleCheck(true)">全选</view>
 			</template>
 		</nav-bar>
 		<!-- 搜索框 -->
@@ -56,6 +56,7 @@ import fList  from '@/components/common/f-list.vue'
 		},
 		data() {
 			return {
+				item:[],
 				list: [
 				        {
 				          type: 'dir',
@@ -101,9 +102,15 @@ import fList  from '@/components/common/f-list.vue'
 		},
 		methods: {
 			select(e){
-				// console.log(e);
+				console.log(e);
 				// 接收到子组件传递过来的索引中的选中状态，将对应的list中的数据更新
-				this.list[e.index].checked = e.value
+				this.list[e.index].checked = e.value;
+			},
+			//取消 全选操作
+			handleCheck(checked){
+				this.list.forEach(item=> {
+					item.checked = checked;
+				})
 			}
 		},
 		computed:{
