@@ -63,7 +63,17 @@
 		 </view>
 		 
 		 <!-- 是否删除 -->
-		 <f-dialog ref="dialog">是否删除选中的文件</f-dialog>
+		 <f-dialog ref="delete">是否删除选中的文件</f-dialog>
+		 <!-- 重命名，通过ref定义不同的对话框对象，不同操作弹出的dialog是不同的对象 -->
+		 <f-dialog ref="rename">
+			 <input
+			 type="text"
+			 v-model="renameValue"
+			 class="flex-1 bg-light rounded px-2"
+			 style="height: 95rpx;"
+			 placeholder="重命名"
+			  />
+		 </f-dialog>
 	</view>
 </template>
 
@@ -77,7 +87,7 @@ import fDialog from '@/components/common/f-dialog.vue'
 		},
 		data() {
 			return {
-				item:[],
+				renameValue: '',
 				list: [
 				        {
 				          type: 'dir',
@@ -135,22 +145,37 @@ import fDialog from '@/components/common/f-dialog.vue'
 			},
 			// 处理底部操作条事件，这里仅对 删除 做了处理
 			handleBottomEvent(item) { 
-				console.log(item);
 				switch (item.name) {
 					case '删除':
-					this.$refs.dialog.open(close => {
+					this.$refs.delete.open(close => {
+						// 对list进行过滤，留下来违背选中的
+						this.list = this.list.filter(item => !item.checked);
 						close();
-						// 在这儿可以写点删除需要做的回调事件，这里先在控制台模拟事件需要把checklist移除掉
-						console.log('删除文件');
-					    console.log(this.checkList);
+						uni.showToast({
+							title:'删除成功',
+							icon: 'none'
+						});
 					});
 					break;
+					case '重命名':
+					     // 重命名只能对单个文件运行，所以取this.checkList[0],也就是选中的唯一元素
+					     this.renameValue = this.checkList[0].name
+					     this.$refs.rename.open(close => {
+					      if(this.renameValue == '') {
+					       return uni.showToast({
+					        title: '文件名称不能为空',
+					        icon:'none'
+					       });
+					      }
+					      // 更新元素的name值，立马看效果
+					      this.checkList[0].name = this.renameValue
+					      close();
+					     });
+					  break;
 				default:
 				    break;
 				}
-			},
-		},
-		onShow(){
+			}
 		},
 		computed:{
 			
@@ -196,29 +221,4 @@ import fDialog from '@/components/common/f-dialog.vue'
 </script>
 
 <style>
-/* 	.content {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.logo {
-		height: 200rpx;
-		width: 200rpx;
-		margin-top: 200rpx;
-		margin-left: auto;
-		margin-right: auto;
-		margin-bottom: 50rpx;
-	}
-
-	.text-area {
-		display: flex;
-		justify-content: center;
-	}
-
-	.title {
-		font-size: 36rpx;
-		color: #8f8f94;
-	} */
 </style>
