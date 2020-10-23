@@ -9,7 +9,7 @@
       <view class="flex-1 flex flex-column text-muted font">
         <view class="flex align-end">
           <text class="font-lg text-dark mr-2">martin</text>
-          男 江苏
+          男 湖南
         </view>
         <text class="text-ellipsis">无业游民</text>
       </view>
