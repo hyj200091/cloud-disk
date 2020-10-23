@@ -16,11 +16,16 @@ module.exports = appInfo => {
   config.keys = appInfo.name + '_1603285777155_9513';
 
   // add your middleware config here
-  config.middleware = [ 'errorHandler' ];
+  config.middleware = [ 'errorHandler', 'auth' ];
 
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',
+  };
+
+  // 这些端点的请求需要token鉴权
+  config.auth = {
+    match: [ '/logout', '/upload', '/getSize', '/file', '/share' ],
   };
   // 加入的配置
   config.security = {
@@ -75,6 +80,10 @@ module.exports = appInfo => {
       password: '',
       db: 1,
     },
+  };
+  // jwt认证鉴权
+  config.jwt = {
+    secret: 'qhdgw@45ncashdaksh2!#@3nxjdas*_672',
   };
   return {
     ...config,

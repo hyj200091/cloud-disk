@@ -12,8 +12,7 @@ class CacheService extends Service {
     const { redis } = this.app;
     let data = await redis.lrange(key, 0, -1);
     if (isChildObject) {
-      // eslint-disable-next-line arrow-parens
-      data = data.map((item) => {
+      data = data.map(item => {
         return JSON.parse(item);
       });
     }
@@ -54,6 +53,7 @@ class CacheService extends Service {
       return await redis.set(key, JSON.stringify(value));
     }
     return await redis.set(key, JSON.stringify(value), 'EX', expir);
+
   }
 
   /**
@@ -79,6 +79,7 @@ class CacheService extends Service {
       return await redis.incr(key);
     }
     return await redis.incrby(key, number);
+
   }
 
   /**
