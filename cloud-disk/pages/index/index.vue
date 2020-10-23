@@ -13,6 +13,7 @@
 				</view>
 				<view style="width: 60rpx; height: 60rpx;"
 				 class="flex align-center justify-center bg-light rounded-circle mr-3"
+				 @click="openSortDialog"
 				 >
 				<text class="iconfont icon-gengduo"></text>
 				</view>
@@ -42,7 +43,7 @@
 				 />
 			</view>
 		</view>
-	    <f-list v-for="(item,index) in list" :key="index" :item="item" :index="index" @select="select"></f-list>
+	    <f-list v-for="(item,index) in list" :key="index" :item="item" @click="doEvent(item)" :index="index" @select="select"></f-list>
 		 <!-- 底部操作条 -->
 		 <!-- 选中的个数大于0才会出现这个操作条 -->
 <view v-if="checkCount > 0">
@@ -109,6 +110,21 @@
 				</view>
 			</view>
 		</uni-popup>
+		<!-- 排序框，底部弹出，遍历排序操作数组，为当前索引项绑定文字蓝色样式 -->
+		<uni-popup ref="sort" type="bottom">
+			<view class="bg-white">
+				<view
+				v-for="(item,index) in sortOptions"
+				:key="index"
+				class="flex align-center justify-center py-3 font border-bottom border-light-secondary"
+				:class="index === sortIndex ? 'text-main' : 'text-dark' "
+				hover-class="bg-light"
+				@click="changeSort(indexx)"
+				>
+					{{item.name}}
+				</view>
+			</view>
+		</uni-popup>
 	</view>
 </template>
 
@@ -125,6 +141,15 @@ import uniPopup from '@/components/uni-ui/uni-popup/uni-popup.vue'
 			return {
 				renameValue: '',
 				newdirname: '',
+				sortIndex: 0,
+				sortOptions: [
+					{
+						name: '按名称排序',
+					},
+					{
+						name:'按时间排序'
+					}
+				],
 				list: [
 				        {
 				          type: 'dir',
@@ -135,13 +160,19 @@ import uniPopup from '@/components/uni-ui/uni-popup/uni-popup.vue'
 				        {
 				          type: 'image',
 				          name: '风景.jpg',
-				          create_time: '2020-10-21 08:00',
+				          data: 'https://soft1851.oss-cn-beijing.aliyuncs.com/markdown/37167bafbea47ee98480f5438968e0d.png',
 				          checked: false
 				        },
+						{
+						  type: 'image',
+						  name: '风景1.jpg',
+						  data: 'https://soft1851.oss-cn-beijing.aliyuncs.com/markdown/2ca9201dd75a7895ab323e985d7748e.jpg',
+						  checked: false
+						},
 				        {
 				          type: 'video',
 				          name: 'uniapp实战教程.mp4',
-				          create_time: '2020-10-21 08:00',
+				          data: 'https://suxiangyang.oss-cn-hangzhou.aliyuncs.com/images/2.mp4',
 				          checked: false
 				        },
 				        {
@@ -185,6 +216,35 @@ import uniPopup from '@/components/uni-ui/uni-popup/uni-popup.vue'
 			// })
 		},
 		methods: {
+			// 切换排序
+			changeSort(index) {
+				this.sortIndex = index;
+				this.$refs.sort.close();
+			},
+			openSortDialog(){
+				this.$refs.sort.open();
+			},
+			// 列表点击事件处理
+			doEvent(item){
+				switch (item.type) {
+					case 'image' : // 预览图片
+					let images = this.list.filter(item => {
+						return item.type === 'image'
+					})
+					uni.previewImage({
+						current: item.data,
+						urls:images.map(item => item.data)
+					})
+					 break;
+					case 'video':
+					uni.navigateTo({
+						url: '../video/video?url='+item.data + '&title='+item.name,
+					});
+					  break;
+					default:
+					 break;
+				}
+			},
 			// 打开添加的操作条
 			openAddDialog(){
 			    this.$refs.add.open();	
@@ -205,7 +265,7 @@ import uniPopup from '@/components/uni-ui/uni-popup/uni-popup.vue'
 				switch (item.name) {
 					case '删除':
 					this.$refs.delete.open(close => {
-						// 对list进行过滤，留下来违背选中的
+						// 对list进行过滤，留下来未被选中的
 						this.list = this.list.filter(item => !item.checked);
 						close();
 						uni.showToast({
