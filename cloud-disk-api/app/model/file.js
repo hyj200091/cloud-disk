@@ -69,9 +69,9 @@ module.exports = app => {
     updated_time: DATE,
   });
 
-  // 删除后
+  // 监听批量删除
   File.afterBulkDestroy(async (data, option) => {
-    console.log('删除后', data.where);
+    console.log('批量删除后', data.where.id);
     let files = await app.model.File.findAll({
       where: {
         file_id: data.where.id,
