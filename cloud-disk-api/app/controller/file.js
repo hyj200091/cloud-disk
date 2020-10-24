@@ -264,7 +264,7 @@ class FileController extends Controller {
     const user_id = ctx.authUser.id;
 
     ctx.validate({
-      keyword:{
+      keyword: {
         required: true,
         type: 'string',
         desc: '关键字',
