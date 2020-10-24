@@ -125,14 +125,16 @@ class UserController extends Controller {
     }
     ctx.apiSuccess('退出登录成功');
   }
-    // 剩余容量
-    async getSize() {
-      const { ctx, service } = this,
-      return ctx.apiSuccess({
-            total_size: ctx.authUser.total_size,
-            used_size: ctx.authUser.used_size,
-          })
-      }
+  // 剩余容量
+  async getSize() {
+    // eslint-disable-next-line semi
+    // eslint-disable-next-line no-unused-vars
+    const { ctx, service } = this;
+    return ctx.apiSuccess({
+      total_size: ctx.authUser.total_size,
+      used_size: ctx.authUser.used_size,
+    });
+  }
 }
 
 module.exports = UserController;
