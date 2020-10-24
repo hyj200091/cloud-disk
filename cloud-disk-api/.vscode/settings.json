@@ -69,7 +69,7 @@
 	"[markdown]": {
 		"editor.defaultFormatter": "yzhang.markdown-all-in-one"
 	},
-	"editor.fontSize": 15,
+	"editor.fontSize": 18,
 	"editor.codeActionsOnSave": {
 		"source.fixAll.eslint": true
 	},
