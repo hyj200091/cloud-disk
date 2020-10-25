@@ -175,7 +175,6 @@ class FileController extends Controller {
   async rename() {
     const { ctx, app } = this;
     const user_id = ctx.authUser.id;
-
     ctx.validate({
       id: {
         required: true,
@@ -191,19 +190,22 @@ class FileController extends Controller {
       name: {
         required: true,
         type: 'string',
-        desc: '文件名称',
+        desc: '文件夹名称',
       },
     });
-    const { id, file_id, name } = ctx.request.body;
-
     // 验证目录id是否存在
+    let { id, file_id, name } = ctx.request.body;
+
     if (file_id > 0) {
       await this.service.file.isDirExist(file_id);
     }
     // 文件是否存在
-    const f = await this.service.file.isExist(id);
+
+    let f = await this.service.file.isExist(id);
+
     f.name = name;
-    const res = await f.save;
+    let res = await f.save();
+
     ctx.apiSuccess(res);
   }
   // 批量删除文件
