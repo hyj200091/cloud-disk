@@ -1,3 +1,5 @@
+/* eslint-disable prefer-const */
+/* eslint-disable no-unused-vars */
 'use strict';
 const Controller = require('egg').Controller;
 const fs = require('fs');
@@ -19,23 +21,30 @@ class FileController extends Controller {
         desc: '目录id',
       },
     });
-    const file_id = ctx.query.file_id;
-    console.log(file_id + '&&&&&&&&&');
-    let f;
-    // 目录id是否存在
-    if (file_id > 0) {
-      // 目录是否存在,存在就返回目录对象，从而取得目录名字，不存在直接在service就出错返回了
-      await service.file.isDirExist(file_id).then(res => {
-        console.log(res + '>>>>>>>>>>');
-        f = res;
-      });
-    }
     // 取得上传的文件对象
     const file = ctx.request.files[0];
-    // 动态将目录名称作为前缀和文件名拼接
-    const name = f.name + '/' + ctx.genID(10) + path.extname(file.filename);
+
+    const file_id = ctx.query.file_id;
+
+    // 处理传非更目录的情况
+    let prefixPath = '';
+    // 根据file_id一直向上找到顶层目录
+    if (file_id > 0) {
+      prefixPath = await service.file.seachDir(file_id);
+      console.log(prefixPath);
+    }
+
+    // 处理传根目录的情况
+    if (file_id === 0) {
+      prefixPath = '/';
+    }
+
+    // 拼接出最终文件上传目录
+    const name = prefixPath + ctx.genID(10) + path.extname(file.filename);
+
     // 判断用户网盘内存是否不足
-    const s = await new Promise((resolve, reject) => {
+    // eslint-disable-next-line prefer-const
+    let s = await new Promise((resolve, reject) => {
       fs.stat(file.filepath, (err, stats) => {
         resolve((stats.size / 1024).toFixed(1));
       });
@@ -54,7 +63,7 @@ class FileController extends Controller {
     console.log(result.url);
     // 写入到数据表
     if (result) {
-      const addData = {
+      let addData = {
         name: file.filename,
         ext: file.mimeType,
         md: result.name,
@@ -64,7 +73,7 @@ class FileController extends Controller {
         isdir: 0,
         url: result.url,
       };
-      const res = await app.model.File.create(addData);
+      let res = await app.model.File.create(addData);
       // 更新用户的网盘内存使用情况
       currentUser.used_size = currentUser.used_size + parseInt(s);
       currentUser.save();

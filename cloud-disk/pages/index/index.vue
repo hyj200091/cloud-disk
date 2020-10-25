@@ -150,43 +150,7 @@ import uniPopup from '@/components/uni-ui/uni-popup/uni-popup.vue'
 						name:'按时间排序'
 					}
 				],
-				list: [
-				        {
-				          type: 'dir',
-				          name: '我的笔记',
-				          create_time: '2020-10-21 08:00',
-				          checked: false
-				        },
-				        {
-				          type: 'image',
-				          name: '风景.jpg',
-				          data: 'https://soft1851.oss-cn-beijing.aliyuncs.com/markdown/37167bafbea47ee98480f5438968e0d.png',
-				          checked: false
-				        },
-						{
-						  type: 'image',
-						  name: '风景1.jpg',
-						  data: 'https://soft1851.oss-cn-beijing.aliyuncs.com/markdown/2ca9201dd75a7895ab323e985d7748e.jpg',
-						  checked: false
-						},
-				        {
-				          type: 'video',
-				          name: 'uniapp实战教程.mp4',
-				          data: 'https://suxiangyang.oss-cn-hangzhou.aliyuncs.com/images/2.mp4',
-				          checked: false
-				        },
-				        {
-				          type: 'text',
-				          name: '记事本.txt',
-				          create_time: '2020-10-21 08:00',
-				          checked: false
-				        },
-				        {
-				          type: 'none',
-				          name: '压缩包.rar',
-				          create_time: '2020-10-21 08:00',
-				          checked: false
-				        }],
+				list: [],
 						addList:[{
 						          icon:"icon-file-b-6",
 						          color:"text-success",
@@ -207,15 +171,34 @@ import uniPopup from '@/components/uni-ui/uni-popup/uni-popup.vue'
 			}
 		},
 		onLoad() {
-			// uni.request({
-			// 	url: 'http://localhost:7001/list',
-			// 	method: 'GET',
-			// 	success: res => {
-			// 		console.log(res.data);
-			// 	}
-			// })
+			this.getData();
 		},
 		methods: {
+			formatList(list) {
+				return list.map(item =>{
+					let type = 'none';
+					if (item.isdir === 1) {
+						type = 'dir';
+					}else {
+						type = item.ext.split('/')[0] || 'none';
+					}
+					return {
+						type,
+						checked: false,
+						...item
+					};
+				});
+			},
+			getData() {
+				this.$H
+				.get('/file?file_id=0', {
+					token: true
+				})
+				.then(res => {
+					console.log(res);
+					this.list = this.formatList(res.rows);
+				});
+			},
 			// 切换排序
 			changeSort(index) {
 				this.sortIndex = index;
@@ -230,18 +213,18 @@ import uniPopup from '@/components/uni-ui/uni-popup/uni-popup.vue'
 					case 'image' : // 预览图片
 					let images = this.list.filter(item => {
 						return item.type === 'image'
-					})
+					});
 					uni.previewImage({
-						current: item.data,
-						urls:images.map(item => item.data)
+						current: item.url,
+						urls:images.map(item => item.url)
 					})
-					 break;
+					break;
 					case 'video':
 					uni.navigateTo({
-						url: '../video/video?url='+item.data + '&title='+item.name,
+						url: '../video/video?url='+item.url + '&title='+item.name,
 					});
-					  break;
-					default:
+					 break;
+					 default:
 					 break;
 				}
 			},
