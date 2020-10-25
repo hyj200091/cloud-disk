@@ -26,7 +26,7 @@ class FileService extends Service {
     let f = await this.isDirExist(id);
     files.push(f.name);
     // 如果不是顶级目录
-    while (f.file_id != 0) {
+    while (f.file_id !== 0) {
       // 继续向上查
       f = await this.isDirExist(f.file_id);
       files.push(f.name);

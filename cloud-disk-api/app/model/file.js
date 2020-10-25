@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 'use strict';
 module.exports = app => {
   const { STRING, INTEGER, DATE, ENUM, TEXT } = app.Sequelize;

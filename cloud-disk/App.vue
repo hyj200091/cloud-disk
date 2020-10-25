@@ -1,13 +1,15 @@
 <script>
 	export default {
 		onLaunch: function() {
-			
+			console.log('App Launch');
+			// 初始化用户信息
+			this.$store.dispatch('initUser')
 		},
 		onShow: function() {
-			
+			console.log('App Show');
 		},
 		onHide: function() {
-			
+			console.log('App Hide');
 		}
 	}
 </script>

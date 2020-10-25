@@ -8,18 +8,18 @@
       ></image>
       <view class="flex-1 flex flex-column text-muted font">
         <view class="flex align-end">
-          <text class="font-lg text-dark mr-2">martin</text>
-          男 湖南
+          <text class="font-lg text-dark mr-2">{{ user.nickname || user.username }}</text>
+          {{ user.sex }}
         </view>
-        <text class="text-ellipsis">无业游民</text>
+        <text class="text-ellipsis">{{ user.desc || '暂无描述' }}</text>
       </view>
     </view>
     <view class="bg-light" style="height: 20rpx;"></view>
     <view class="p-3">
       <progress class="mb-3" percent="40" active stroke-width="3" />
       <view class="flex align-center justify-between font">
-        <text class="text-light-muted">总：100GB</text>
-        <text class="text-warning">已用：80GB</text>
+        <text class="text-light-muted">总：{{ user.total_size | bytesToSize }}</text>
+        <text class="text-warning">已用：{{user.used_size | bytesToSize }}</text>
       </view>
     </view>
     <view class="bg-light" style="height: 20rpx;"></view>
@@ -27,17 +27,67 @@
       <text class="text-muted font">设置</text>
       <image src="https://soft1851.oss-cn-beijing.aliyuncs.com/markdown/right.png" mode="" style="width:40rpx;height: 40rpx;"></image>
     </view>
+	<view class="position-fixed fixed-bottom bg-main text-white flex align-center justify-center font-md py-2 rounded-circle"
+	hover-class="bg-main-hover"
+	@click="logout"
+	>
+		退出登录
+	</view>
   </view>
 </template>
 
 <script>
+import { mapState } from 'vuex';
 export default {
   data() {
     return {};
   },
-  methods: {},
   onLoad(){
 	  console.log(this.$store.state.user);
+  },
+  computed:{
+	  // mapState 是Vuex的一个辅助函数，返回的是一个对象，可以帮助我们生成计算属性
+	  ...mapState({
+		  user: state => state.user
+	  }),
+	  // progress计算属性用来实时显示用户空间使用率
+	  progress() {
+		  if(this.user.total_size === 0) {
+			  return 0;
+		  }
+		  return (this.user.used_size / this.user.total_size ) * 100
+	  }
+  },
+  onShow(){
+	  // 每次进入页面，都要获取用户的空间大小
+	  this.getSize();
+  },
+  methods: {
+	  // 请求接口 获得最新的空间大小 并提交给Vuex跟新
+	  getSize() {
+		  this.$H.get('/getSize',{ token: true }).then(res => {
+			  this.$store.dispatch('updateSize', res);
+		  });
+	  },
+	  logout() {
+		  // 调用Vuex的logout，不需要直接在这里调用接口，在Vuex里异步调用即可
+		  this.$store.dispatch('logout').then(res => {
+			  uni.showToast({
+			  	title: '退出成功',
+				icon: 'none'
+			  });
+		  });
+	  }
+  },
+  filters: {
+	  bytesToSize(bytes) {
+		  if(bytes === 0) return '0 KB';
+		  var k = 1000, //or 1024
+		  sizes = ['KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+		  i = Math.floor(Math.log(bytes) / Math.log(k));
+		  
+		  return (bytes / Math.pow(k,i)).toPrecision(3) + '' + sizes[i];
+	  }
   }
 };
 </script>
