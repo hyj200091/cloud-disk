@@ -3,7 +3,19 @@
 		<!-- 自定义导航栏 -->
 	<nav-bar>
 		<template v-if="checkCount === 0">
-			<text slot="left" class="font-md ml-3">首页</text>
+			<!-- 插槽再一次发挥逆天作用，进入子目录，左边将变成箭头，盗汗变成子目录名称 -->
+			<template slot="left">
+				<view
+				style="width: 60rpx;height: 60rpx;"
+				class="flex align-center justify-center bg-light rounded-circle ml-3"
+				hover-class="bg-hover-light"
+				@tap="backUp"
+				v-if="current"
+				>
+					<text class="iconfont icon-fanhui"></text>
+				</view>
+				<text class="font-md ml-3">{{ current ? current.name : '首页' }}</text>
+			</template>
 			<template slot="right">
 				<view style="width: 60rpx; height: 60rpx;"
 				class="flex align-center justify-center bg-light rounded-circle mr-3"
@@ -141,13 +153,16 @@ import uniPopup from '@/components/uni-ui/uni-popup/uni-popup.vue'
 			return {
 				renameValue: '',
 				newdirname: '',
+				dirs: [],
 				sortIndex: 0,
 				sortOptions: [
 					{
 						name: '按名称排序',
+						key: 'name'
 					},
 					{
-						name:'按时间排序'
+						name:'按时间排序',
+						key: 'create_time'
 					}
 				],
 				list: [],
@@ -171,9 +186,15 @@ import uniPopup from '@/components/uni-ui/uni-popup/uni-popup.vue'
 			}
 		},
 		onLoad() {
+			// 页面加载的时候，从本地存储读取redis，如果不清空，会从上次离开的地方继续
+			let dirs = uni.getStorageSync('dirs');
+			if(dirs) {
+				this.dirs = JSON,parse(dirs);
+			}
 			this.getData();
 		},
 		methods: {
+			// 将数据格式化为我们需要显示的样子，不同的文件类型，是否选中
 			formatList(list) {
 				return list.map(item =>{
 					let type = 'none';
@@ -190,8 +211,12 @@ import uniPopup from '@/components/uni-ui/uni-popup/uni-popup.vue'
 				});
 			},
 			getData() {
+				console.log(this.file_id+'>>>>>>>>>>>>>>>>');
+				let orderby = this.sortOptions[this.sortIndex].key;
+				console.log(orderby + '&&&&&&&&&&&&&');
+				// 每次请求API接口的时候，把最新的file_id和选取的orderby排序方式带上
 				this.$H
-				.get('/file?file_id=0', {
+				.get(`/file?file_id=${this.file_id}&orderby=${orderby}`, {
 					token: true
 				})
 				.then(res => {
@@ -201,7 +226,11 @@ import uniPopup from '@/components/uni-ui/uni-popup/uni-popup.vue'
 			},
 			// 切换排序
 			changeSort(index) {
+				// 切换排序的交互，和之前比，激素hi增加根据最新选的排序方法去请求接口数据
+				// this.sortIndex = index;
+				// this.$refs.sort.close();
 				this.sortIndex = index;
+				this.getData();
 				this.$refs.sort.close();
 			},
 			openSortDialog(){
@@ -225,8 +254,27 @@ import uniPopup from '@/components/uni-ui/uni-popup/uni-popup.vue'
 					});
 					 break;
 					 default:
+					 // 点击的是文件夹 就是把当前元素push到路由数组中去，然后用这个目录的id 去请求它的层级里的数据 同时存到本地存储
+					    this.dirs.push({
+							id: item.id,
+							name: item.name
+						});
+						this.getData();
+						uni.setStorage({
+							key: 'dirs',
+							data: JSON.stringify(this.dirs)
+						});
 					 break;
 				}
+			},
+			//返回上一个目录  顶部导航栏在子目录的时候，会有返回箭头，它的事件如下，路由出栈，在获取回到上一层的罪行数据 存储
+			backUp() {
+				this.dirs.pop();
+				this.getData();
+				uni.setStorage({
+					key: 'dirs',
+					data: JSON.stringify(this.dirs)
+				});
 			},
 			// 打开添加的操作条
 			openAddDialog(){
@@ -308,7 +356,22 @@ import uniPopup from '@/components/uni-ui/uni-popup/uni-popup.vue'
 			}
 		},
 		computed:{
-			
+			// file_id计算属性取得应该传到后端的file_id参数 就是当前目录
+			file_id() {
+				let l = this.dirs.length;
+				if(l===0) {
+					return 0;
+				}
+				return this.dirs[l-1].id
+			},
+			// current计算属性侧用来切换导航栏样式
+			current() {
+				let l = this.dirs.length
+				if (l===0) {
+					return false;
+				}
+				return this.dirs[l-1];
+			},
 			//选中列表
 			checkList(){
 			return	this.list.filter(item => item.checked);
