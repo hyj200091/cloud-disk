@@ -1,6 +1,6 @@
 # cloud-disk-api
 
-no
+使用egg写的纯js后台接口
 
 ## QuickStart
 

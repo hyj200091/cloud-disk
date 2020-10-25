@@ -35,7 +35,10 @@ export default {
   data() {
     return {};
   },
-  methods: {}
+  methods: {},
+  onLoad(){
+	  console.log(this.$store.state.user);
+  }
 };
 </script>
 

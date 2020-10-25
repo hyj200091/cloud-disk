@@ -1,7 +1,4 @@
-/* eslint-disable no-unused-vars */
 'use strict';
-
-
 const crypto = require('crypto');
 module.exports = app => {
   const { STRING, INTEGER, DATE, ENUM, TEXT } = app.Sequelize;

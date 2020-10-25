@@ -1,9 +1,5 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable prefer-const */
 'use strict';
-
 module.exports = app => {
-  // eslint-disable-next-line no-unused-vars
   const { STRING, INTEGER, DATE, ENUM, TEXT } = app.Sequelize;
   const File = app.model.define('file', {
     id: {
@@ -68,24 +64,13 @@ module.exports = app => {
     created_time: DATE,
     updated_time: DATE,
   });
-
   // 监听批量删除
   File.afterBulkDestroy(async (data, option) => {
     console.log('批量删除后', data.where.id);
-    let files = await app.model.File.findAll({
-      where: {
-        file_id: data.where.id,
-        user_id: data.where.user_id,
-        isdir: 1,
-      },
-    });
-
-    // eslint-disable-next-line arrow-parens
-    let ids = files.map((item) => item.id);
-    if (ids.length > 0) {
+    if (data.where.id) {
       app.model.File.destroy({
         where: {
-          id: ids,
+          file_id: data.where.id,
           user_id: data.where.user_id,
         },
       });

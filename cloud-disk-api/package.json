@@ -1,7 +1,7 @@
 {
   "name": "cloud-disk-api",
   "version": "1.0.0",
-  "description": "no",
+  "description": "使用egg写的纯js后台接口",
   "private": true,
   "egg": {
     "declarations": true
@@ -16,8 +16,7 @@
     "egg-scripts": "^2.11.0",
     "egg-sequelize": "^6.0.0",
     "egg-valparams": "^1.4.3",
-    "mysql2": "^2.2.5",
-    "webpack-dev-server": "^2.9.1"
+    "mysql2": "^2.2.5"
   },
   "devDependencies": {
     "autod": "^3.0.1",
@@ -51,6 +50,6 @@
     "type": "git",
     "url": ""
   },
-  "author": "yuejiahou",
+  "author": "Guorc",
   "license": "MIT"
 }

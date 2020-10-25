@@ -10,24 +10,22 @@ module.exports = appInfo => {
    * built-in config
    * @type {Egg.EggAppConfig}
    **/
-  const config = exports = {};
+  const config = (exports = {});
 
   // use for cookie sign key, should change to your own and keep security
-  config.keys = appInfo.name + '_1603285777155_9513';
+  config.keys = appInfo.name + '_1603281748043_6882';
 
-  // add your middleware config here
-  config.middleware = [ 'errorHandler', 'auth' ];
+  // 全局信息配置
+  config.middleware = [ 'errorHandle', 'auth' ];
 
+  // 这些接口需要鉴权
+  config.auth = {
+    match: [ '/logout', '/upload', '/getSize', '/file', '/share' ],
+  };
   // add your user config here
   const userConfig = {
     // myAppName: 'egg',
   };
-
-  // 这些端点的请求需要token鉴权
-  config.auth = {
-    match: [ '/logout', '/upload', '/getSize', '/file', '/share' ],
-  };
-  // 加入的配置
   config.security = {
     // 关闭 csrf
     csrf: {
@@ -41,7 +39,6 @@ module.exports = appInfo => {
     origin: '*',
     allowMethods: 'GET, PUT, POST, DELETE, PATCH',
   };
-  // 加入sequelize的配置
   config.sequelize = {
     dialect: 'mysql',
     host: '127.0.0.1',
@@ -76,22 +73,22 @@ module.exports = appInfo => {
   config.redis = {
     client: {
       port: 6379, // Redis port
-      host: '127.0.0.1', // Redis host
+      host: '39.98.143.134', // Redis host
       password: '',
       db: 1,
     },
   };
-  // jwt认证鉴权
+  // jwt加密鉴权
   config.jwt = {
     secret: 'qhdgw@45ncashdaksh2!#@3nxjdas*_672',
   };
   // oss配置
   config.oss = {
     client: {
-      accessKeyId: '*************',
-      accessKeySecret: '*************',
-      bucket: 'my-egg-oss',
-      endpoint: 'oss-cn-hangzhou.aliyuncs.com',
+      accessKeyId: 'LTAIgdZanTs9A7Zp',
+      accessKeySecret: 'j6VIpGHakxqQFjS3t2lWVPQJ3cknS5',
+      bucket: 'egg-oss-hou',
+      endpoint: 'oss-cn-beijing.aliyuncs.com',
       timeout: '60s',
     },
   };

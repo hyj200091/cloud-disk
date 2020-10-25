@@ -30,7 +30,7 @@
       />
 
       <view
-        class="bg-main1 text-white flex align-center justify-center font-md py-2 rounded-circle"
+        class="bg-main text-white flex align-center justify-center font-md py-2 rounded-circle"
         hover-class="bg-main-hover"
         @click="handleClick"
       >
@@ -48,28 +48,49 @@
 
 <script>
 export default {
-  data() {
-    return {
-      type: 'login',
-      form: {
-        username: '',
-        password: '',
-        repassword: ''
-      }
-    };
-  },
-  methods: {
-    changeType() {
-      this.type = this.type === 'login' ? 'reg' : 'login';
-    },
-    handleClick() {
-      if (this.type === 'login') {
-        uni.switchTab({
-          url: '../index/index'
-        });
-      }
-    }
-  }
+	data() {
+		return {
+			type: 'login',
+			form: {
+				username: '',
+				password: '',
+				repassword: ''
+			}
+		};
+	},
+	onLoad() {},
+	methods: {
+		changeType() {
+			this.type = this.type === 'login' ? 'reg' : 'login';
+		},
+		handleClick() {
+		   // 确定是登录还是注册
+		   let msg = this.type === 'login' ? '登录':'注册';
+		   this.$H.post('/' + this.type,this.form).then(res => {
+		    uni.showToast({
+		     title: msg + '成功',
+		     icon:'none'
+		    });
+		    // 如果是登录，成功则跳转到首页
+		    if(this.type === 'login'){
+		     this.$store.dispatch('login',res).then(result => {
+		      uni.switchTab({
+		       url: '../index/index'
+		      })
+		     })
+		    } else {
+		     // 注册，重置表单
+		     this.form = {
+		      username:'',
+		      password:'',
+		      repassword:''
+		     };
+		     // 注册成功跳转到登录
+		     this.changeType();
+		    }
+		   })
+		 }
+	}
 };
 </script>
 

@@ -61,7 +61,17 @@ class UserController extends Controller {
 
     ctx.apiSuccess(user);
   }
-
+  // 查询个人信息
+  async findById() {
+    const { ctx, app } = this;
+    const { id } = ctx.request.body;
+    let user = await app.model.User.findOne({
+      id,
+      attributes: [ 'username' ],
+    });
+    user = JSON.parse(JSON.stringify(user));
+    ctx.apiSuccess(user);
+  }
   // 登录
   async login() {
     const { ctx, app } = this;
@@ -106,7 +116,6 @@ class UserController extends Controller {
 
     ctx.apiSuccess(user);
   }
-
   // 验证密码
   checkPassword(password, hash_password) {
     const hmac = crypto.createHash('sha256', this.app.config.crypto.secret);
@@ -124,16 +133,6 @@ class UserController extends Controller {
       ctx.throw(400, '退出登录失败');
     }
     ctx.apiSuccess('退出登录成功');
-  }
-  // 剩余容量
-  async getSize() {
-    // eslint-disable-next-line semi
-    // eslint-disable-next-line no-unused-vars
-    const { ctx, service } = this;
-    return ctx.apiSuccess({
-      total_size: ctx.authUser.total_size,
-      used_size: ctx.authUser.used_size,
-    });
   }
 }
 

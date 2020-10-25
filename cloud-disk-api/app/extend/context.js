@@ -1,5 +1,3 @@
-/* eslint-disable strict */
-
 module.exports = {
   // 成功提示
   apiSuccess(data = '', msg = 'ok', code = 200) {
@@ -21,17 +19,16 @@ module.exports = {
       Math.random().toString().substr(3, length) + Date.now()
     ).toString(36);
   },
-  // 是否是移动端访问
-  ismobile() {
+  // eslint-disable-next-line no-unused-vars
+  ismobile(ctx) {
     const userAgent = this.request.header['user-agent'].toLowerCase();
     const pat_phone = /ipad|iphone os|midp|rv:1.2.3.4|ucweb|android|windows ce|windows mobile/;
     return pat_phone.test(userAgent);
   },
-  // eslint-disable-next-line no-dupe-keys
+  // 生成唯一id
   genID(length) {
     return Number(
       Math.random().toString().substr(3, length) + Date.now()
     ).toString(36);
   },
 };
-

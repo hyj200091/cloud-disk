@@ -1,3 +1,4 @@
+/* eslint-disable eggache/no-unexpected-plugin-keys */
 'use strict';
 
 /** @type Egg.EggPlugin */
@@ -7,7 +8,7 @@ module.exports = {
     package: 'egg-cors',
   },
   sequelize: {
-    enable: true,
+    enabled: true,
     package: 'egg-sequelize',
   },
   valparams: {
@@ -22,5 +23,12 @@ module.exports = {
     enable: true,
     package: 'egg-jwt',
   },
-  oss: { enable: true, package: 'egg-oss' },
+  oss: {
+    enable: true,
+    package: 'egg-oss',
+  },
+  // had enabled by egg
+  // static: {
+  //   enable: true,
+  // }
 };

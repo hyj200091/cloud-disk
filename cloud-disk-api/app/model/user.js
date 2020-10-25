@@ -1,7 +1,7 @@
-/* eslint-disable arrow-parens */
+// app/model/user.js
 'use strict';
 const crypto = require('crypto');
-module.exports = (app) => {
+module.exports = app => {
   const { STRING, INTEGER, DATE, ENUM, TEXT } = app.Sequelize;
 
   const User = app.model.define('user', {
