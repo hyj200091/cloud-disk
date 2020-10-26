@@ -21,14 +21,28 @@
 		@change="changeTab($event.detail.current)">
 		<swiper-item class="flex-1 flex" v-for="(item,index) in tabBars" :key="index">
 			<scroll-view scroll-y="true" class="flex-1">
-				<!-- <view style="height: 60rpx;" class="bg-light flex align-center font-sm px-2 text-muted">
-					文件下载至: storage/xxxx/xxxx
-				</view>
-				<view class="p-2 border-bottom border-light-secondary font text-muted">
-					下载中({{downing.length}})
-				</view> -->
 				<!-- 下载列表 -->
-				<template v-if="index === 0"></template>
+				<template v-if="index === 0">
+					<view style="height: 60rpx;" class="bg-light flex align-center font-sm px-2 text-muted">
+						文件下载至:_doc/uniapp_temp_1603680037252/download/
+					</view>
+					<view class="p-2 border-bottom border-light-secondary font text-muted">
+						下载中({{ downing.length }})
+					</view>
+					<f-list v-for="(item,index) in downing" :key="'i' + index" :item="item" :index="index">
+						<view style="height: 70rpx;" class="flex align-center text-main">
+							<text class="iconfont icon-zanting"></text>
+							<text class="ml-1">{{ item.progress }}%</text>
+						</view>
+						<progress slot="bottom" :percent="item.progress" activeColor="#009CFF" :stroke-width="4" />
+					</f-list>
+					
+					<view class="p-2 border-bottom border-light-secondary font text-muted">
+						下载完成({{ downed.length }})
+					</view>
+					<f-list v-for="(item,index) in downed" :key="'d' + index" :item="item" :index="index" :showRight="false">
+					</f-list>
+				</template>
 				<!-- 上传列表 -->
 				<template v-else>
 					<view class="p-2 border-bottom border-light-secondary font text-muted">
@@ -45,7 +59,7 @@
 					</f-list>
 					
 					<view class="p-2 border-bottom border-light-secondary font text-muted">
-						下载完成（{{ uploaded.length }})
+						上传完成（{{ uploaded.length }})
 					</view>
 					<f-list
 					v-for="(item,index) in uploaded"
@@ -119,11 +133,26 @@
 		methods:{
 			changeTab(index) {
 				this.tabIndex = index
+			},
+			onNavigationBarButtonTap() {
+				uni.showModal({
+					content: '是否要清楚传输记录？',
+					success: res => {
+						if (res.confirm) {
+							this.$store.dispatch('clearList');
+							uni.showToast({
+								title: '清楚成功',
+								icon: 'none'
+							});
+						}
+					}
+				});
 			}
 		},
 		computed:{
 			...mapState({
-				uploadList: state => state.uploadList
+				uploadList: state => state.uploadList,
+				downlist: state => state.downlist
 			}),
 			uploading(){
 				return this.uploadList.filter(item => {
@@ -134,17 +163,17 @@
 				return this.uploadList.filter(item => {
 					return item.progress === 100;
 				});
+			},
+			downing() {
+				return this.downlist.filter(item => {
+					return item.download < 100;
+				});
+			},
+			downed() {
+				return this.downlist.filter(item => {
+					return item.download === 100;
+				});
 			}
-			// downing() {
-			// 	return this.list.filter(item => {
-			// 		return item.download < 100;
-			// 	});
-			// },
-			// downed() {
-			// 	return this.list.filter(item => {
-			// 		return item.download === 100;
-			// 	});
-			// }
 		}
 	};
 </script>

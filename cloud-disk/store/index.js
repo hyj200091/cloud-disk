@@ -7,6 +7,7 @@ import $H from '../common/request.js';
 
 export default new Vuex.Store({
 	state: {
+		clearList: [],
 		downlist: [],   //下载任务
 		uploadList: [],  // 用来记录上传任务
 		user: null,
