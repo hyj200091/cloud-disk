@@ -21,32 +21,40 @@
 		@change="changeTab($event.detail.current)">
 		<swiper-item class="flex-1 flex" v-for="(item,index) in tabBars" :key="index">
 			<scroll-view scroll-y="true" class="flex-1">
-				<view style="height: 60rpx;" class="bg-light flex align-center font-sm px-2 text-muted">
+				<!-- <view style="height: 60rpx;" class="bg-light flex align-center font-sm px-2 text-muted">
 					文件下载至: storage/xxxx/xxxx
 				</view>
 				<view class="p-2 border-bottom border-light-secondary font text-muted">
 					下载中({{downing.length}})
-				</view>
+				</view> -->
+				<!-- 下载列表 -->
+				<template v-if="index === 0"></template>
+				<!-- 上传列表 -->
+				<template v-else>
+					<view class="p-2 border-bottom border-light-secondary font text-muted">
+						上传中({{ uploading.length }})
+					</view>
                <!-- 这里注意，因为下面同级还有个f-list中绑定了key为index 会冲突，所以分别给他们加上不同的前缀区分，否则会报错 -->
-                    <f-list v-for="(item,index) in downing" :key="'i'+ index" :item="item" :index="index">
+                    <f-list v-for="(item,index) in uploading" :key="'i'+ index" :item="item" :index="index">
 						<view style="height: 70rpx;" class="flex align-center text-main1">
 							<text class="iconfont icon-zanting"></text>
-							<text class="ml-1">{{item.download}}%</text>
+							<text class="ml-1">{{ item.progress }}%</text>
 						</view>
 						<!-- 进度条组件 uniapp自带的无需引入 precent属性绑定下载百分比数组 -->
-					    <progress slot="bottom" activeColor="#009CFF" :percent="item.download" :stroke-width="4" />
+					    <progress slot="bottom" activeColor="#009CFF" :percent="item.progress" :stroke-width="4" />
 					</f-list>
 					
 					<view class="p-2 border-bottom border-light-secondary font text-muted">
-						下载完成（{{downed.length}})
+						下载完成（{{ uploaded.length }})
 					</view>
 					<f-list
-					v-for="(item,index) in downed"
+					v-for="(item,index) in uploaded"
 					:key="'d' + index "
 					:item="item"
 					:index="index"
 					:showRight="false"
 					></f-list>
+					</template>
 			</scroll-view>
 		</swiper-item>
 		</swiper>
@@ -55,6 +63,7 @@
 
 <script>
 	import fList from '@/components/common/f-list.vue';
+	import { mapState } from 'vuex';
 	export default {
 		components:{
 			fList
@@ -113,16 +122,29 @@
 			}
 		},
 		computed:{
-			downing() {
-				return this.list.filter(item => {
-					return item.download < 100;
+			...mapState({
+				uploadList: state => state.uploadList
+			}),
+			uploading(){
+				return this.uploadList.filter(item => {
+					return item.progress < 100;
 				});
 			},
-			downed() {
-				return this.list.filter(item => {
-					return item.download === 100;
+			uploaded() {
+				return this.uploadList.filter(item => {
+					return item.progress === 100;
 				});
 			}
+			// downing() {
+			// 	return this.list.filter(item => {
+			// 		return item.download < 100;
+			// 	});
+			// },
+			// downed() {
+			// 	return this.list.filter(item => {
+			// 		return item.download === 100;
+			// 	});
+			// }
 		}
 	};
 </script>

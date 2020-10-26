@@ -2,6 +2,7 @@ export default {
 	// 全局配置
 	common: {
 		// #ifndef H5
+		// https://houyuejia.utools.club 7001
 		baseUrl: "https://houyuejia.utools.club",
 		// #endif
 		// #ifdef H5
