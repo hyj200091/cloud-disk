@@ -186,7 +186,13 @@ import uniPopup from '@/components/uni-ui/uni-popup/uni-popup.vue'
 						        }]
 			}
 		},
+		onShow(){
+			this.getData();
+		// this.$store.dispatch('getShareUrl');
+			// this.$store.dispatch('getShareUrl');
+		},
 		onLoad() {
+			this.$store.dispatch('getShareUrl');
 			// 页面加载的时候，从本地存储读取redis，如果不清空，会从上次离开的地方继续
 			let dirs = uni.getStorageSync('dirs');
 			if(dirs) {

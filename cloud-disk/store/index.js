@@ -81,6 +81,39 @@ export default new Vuex.Store({
 				state.downlist = []
 			}
 		},
+		// 读取到剪切板的内容 保存到我的网盘
+		getShareUrl({
+			state
+		}) {
+			console.log(111111);
+			// #ifndef H5
+			uni.getClipboardData({
+				success: (res) => {
+					// 通过前面的结果可以看到剪贴的链接是以http://127.0.0.1：7001/开头的，接口上线了这个地址需要修改
+					if (res.data.includes('http://127.0.0.1:7001/')) {
+						// 需要从完整的链接中取出key的值，数据库应该知道真正的链接应该就是和这个相关的
+						let key = res.data.substring(res.data.lastIndexOf('\/') + 1, res.data.length)
+						if (!key) {
+							return
+						}
+						uni.showModal({
+							content: '检测到有分享内容，是否打开?',
+							success: (res) => {
+								if (res.confirm) {
+								uni.navigateTo({
+									url: '/pages/shareurl/shareurl?key=' + key
+								})
+								// 清空剪贴板
+								uni.setClipboardData({
+									data: ''
+								});
+							   }
+							}
+						});
+					}
+				}
+			});
+		},
 		logout({ state }) {
 			$H.post('/logout',{}, {
 				token: true
