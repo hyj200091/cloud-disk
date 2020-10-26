@@ -422,6 +422,10 @@ import uniPopup from '@/components/uni-ui/uni-popup/uni-popup.vue'
 				    case '下载' :
 				        this.download();
 				    	break;
+					case '分享':
+						this.share();
+						this.handleCheck(false);
+						break;
 				default:
 				    break;
 				}
@@ -527,6 +531,37 @@ import uniPopup from '@/components/uni-ui/uni-popup/uni-popup.vue'
 				});
 				
 				this.handleCheck(false);
+			},
+			share() {
+				this.$H
+				.post(
+				'/share/create',
+				{
+					file_id: this.checkList[0].id
+				},
+				{ token: true }
+				)
+				.then(res => {
+					uni.showModal({
+						content: res,
+						showCancel: false,
+						success: result => {
+							// 不能再用res 会和前面冲突
+							// #ifndef H5
+							uni.setClipboardData({
+								// 复制到剪贴板
+								data: res,
+								success: () => {
+									uni.showToast({
+										title: '复制成功',
+										icon: 'none'
+									});
+								}
+							});
+							//#endif
+						}
+					});
+				});
 			}
 		},
 		computed:{

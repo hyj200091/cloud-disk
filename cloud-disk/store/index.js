@@ -71,6 +71,16 @@ export default new Vuex.Store({
 				})
 			}
 		},
+		// 清除列表的方法
+		clearList({ state }){
+			if(state.user) {
+				uni.removeStorageSync('downlist_'+state.user.id)
+				uni.removeStorageSync('uploadList_'+state.user.id)
+				
+				state.uploadList = []
+				state.downlist = []
+			}
+		},
 		logout({ state }) {
 			$H.post('/logout',{}, {
 				token: true
