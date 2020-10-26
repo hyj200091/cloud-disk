@@ -7,6 +7,7 @@ import $H from '../common/request.js';
 
 export default new Vuex.Store({
 	state: {
+		downlist: [],   //下载任务
 		uploadList: [],  // 用来记录上传任务
 		user: null,
 		token: null
@@ -39,6 +40,33 @@ export default new Vuex.Store({
 				uni.setStorage({
 					key: 'uploadList_' + state.user.id,
 					data: JSON.stringify(state.uploadList)
+				})
+			}
+		},
+		// 创建一个下载任务
+		createDownLoadJob({
+			state
+		}, obj) {
+			state.downlist.unshift(obj)
+			uni.setStorage({
+				key: "downlist_" + state.user.id,
+				data: JSON.stringify(state.downlist)
+			})
+		},
+		// 更新下载任务进度
+		updateDownLoadJob({
+			state
+		}, obj) {
+			let i = state.downlist.findIndex(item => item.key === obj.key)
+			// 如果存在
+			if (i !== -1) {
+				// 更新proress属性的之和上传状态的值
+				state.downlist[i].progress = obj.progress
+				state.downlist[i].status = obj.status
+				// 异步更新本地存储
+				uni.setStorage({
+					key: 'downlistist_' + state.user.id,
+					data: JSON.stringify(state.downlist)
 				})
 			}
 		},
