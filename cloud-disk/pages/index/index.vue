@@ -195,6 +195,53 @@ import uniPopup from '@/components/uni-ui/uni-popup/uni-popup.vue'
 			this.getData();
 		},
 		methods: {
+			// 生成唯一ID
+			genID(length) {
+				return Number(
+				  Math.random()
+				  .toString()
+				  .substr(3,length) + Date.now()
+				).toString(36);
+			},
+			// 上传
+			upload(file, type){
+				// 上传文件的类型
+				let t = type;
+				// 上传的key 用来区分每个文件
+				const key = this.genID(8);
+				// 构建上传文件的对象，文件名， 类型，大小，唯一的key， 进度，状态， 创建时间
+				let obj = {
+					name: file.name,
+					type: t,
+					size: file.size,
+					key,
+					progress: 0,
+					statue: true,
+					created_now: new Date().getTime()
+				};
+				// 创建上传任务，分发给Vuex的Action是，异步上传调度，主要是实现上传进度的回调
+				this.$store.dispatch('createUploadJob', obj);
+				// 上传，查询参数为当前位置所在目录的id，body参数为文件路径
+				this.$H
+				.upload(
+				    '/upload?file_id=' + this.file_id,
+				{
+					filePath: file.path
+				},
+				p =>{
+					// 更新上传任务进度条
+					this.$store.dispatch('updateUploadJob', {
+						statue: true,
+						progress: p,
+						key
+					});
+				}
+				)
+				.then(res => {
+					// 上传成功，请求接口数据更新列表
+					this.getData();
+				});
+			},
 			// 搜索功能，关键字为空就走请求所有数据的接口，否则就将文本框实时输入的内容作为关键词进行搜索
 			search(e) {
 				if (e.detail.value == ''){
@@ -380,6 +427,19 @@ import uniPopup from '@/components/uni-ui/uni-popup/uni-popup.vue'
 			handleAddEvent(item) {
 				this.$refs.add.close();
 				switch (item.name) {
+					case '上传图片':
+					console.log('点击了上传图片！！！');
+					// 选择图片，限制为9张
+					uni.chooseImage({
+						count: 9,
+						success: res => {
+							// 选择图片成功，就循环异步调用上传接口
+							res.tempFiles.forEach(item => {
+								this.upload(item, 'image');
+							});
+						}
+					});
+					break;
 					case '新建文件夹':
 					this.$refs.newdir.open(close => {
 						if(this.newdirname == '') {

@@ -88,7 +88,7 @@ class UserController extends Controller {
         desc: '密码',
       },
     });
-    // 获取到数据
+    // 通过ctx.request.body拿到前端传回来的参数 用const来定义 获取到数据
     const { username, password } = ctx.request.body;
     // 验证用户是否存在
     let user = await app.model.User.findOne({

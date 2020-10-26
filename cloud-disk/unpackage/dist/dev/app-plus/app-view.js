@@ -1852,7 +1852,11 @@ var render = function() {
             [
               _c(
                 "v-uni-text",
-                { staticClass: _vm._$g(4, "sc"), attrs: { _i: 4 } },
+                {
+                  staticClass: _vm._$g(4, "sc"),
+                  staticStyle: { width: "500rpx" },
+                  attrs: { _i: 4 }
+                },
                 [_vm._v(_vm._$g(4, "t0-0"))]
               ),
               _c(
